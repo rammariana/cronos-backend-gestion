@@ -1,8 +1,3 @@
-//require('express');
-//require('cors');
-//require('helmet');
-//require('morgan');
-//require('multer');
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
