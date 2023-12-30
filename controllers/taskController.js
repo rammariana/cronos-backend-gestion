@@ -154,7 +154,8 @@ const getAllTasksByUser = async (req, res) => {
 
 const editTask = async (req, res) => {
   const taskId = req.params.id;
-  const { task_name, task_days, task_hour, task_priority } = req.body;
+  const { task_name, task_days, task_hour, task_priority, task_completed } =
+    req.body;
   console.log(taskId);
   try {
     const taskInfo = await Task.findById(taskId);
@@ -167,6 +168,7 @@ const editTask = async (req, res) => {
     taskInfo.task_days = task_days || taskInfo.task_days;
     taskInfo.task_hour = task_hour || taskInfo.task_hour;
     taskInfo.task_priority = task_priority || taskInfo.task_priority;
+    taskInfo.task_completed = task_completed || taskInfo.task_completed;
 
     const updateTask = await taskInfo.save();
     //console.log(updateTask);
