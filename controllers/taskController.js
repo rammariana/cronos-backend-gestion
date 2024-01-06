@@ -240,7 +240,7 @@ const getAudios = async (req, res) => {
 
   try {
     const userAudios = await Audio.find({ user_id: userId });
-    res.status(200).json({ userAudios });
+    res.status(200).json(userAudios);
   } catch (err) {
     console.log(err);
     res.status(400).json({ error: "internal server" });
