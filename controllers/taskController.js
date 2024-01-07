@@ -201,7 +201,9 @@ const addAudio = async (req, res) => {
 
   try {
     if (!req.file) {
-      return res.status(400).send("Debes subir un archivo de audio.");
+      return res
+        .status(400)
+        .send({ error: "Debes subir un archivo de audio." });
     }
 
     let fileBuffer = await req.file.buffer;
