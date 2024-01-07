@@ -9,7 +9,13 @@ import {
   deleteObject,
 } from "firebase/storage";
 
-// bd-audios-firebase-adminsdk-8fla7-f3659418c0.json
+// nuevo 
+const ffmpeg = require('fluent-ffmpeg');
+const util = require('util');
+
+const execPromise = util.promisify(ffmpeg.ffprobe);
+//
+
 
 dotenv.config();
 const mongoURI = process.env.API_KEY;
@@ -207,12 +213,37 @@ const addAudio = async (req, res) => {
     }
 
     let fileBuffer = await req.file.buffer;
-    const fileRef = ref(
+    //
+    // Convertir el audio a formato MP3 con FFmpeg
+    const mp3Buffer = await new Promise((resolve, reject) => {
+      ffmpeg()
+        .input(fileBuffer)
+        .audioCodec("libmp3lame")
+        .toFormat("mp3")
+        .on("end", () => resolve())
+        .on("error", (err) => reject(err))
+        .pipe();
+    });
+
+    const mp3Blob = new Blob([mp3Buffer], { type: "audio/mp3" });
+    //
+    /*const fileRef = ref(
       storage,
       `files/${req.file.originalname} ${Date.now()}`
+    );*/
+    
+const mp3FileRef = ref(
+  storage,
+  `files/${req.file.originalname.replace(/\.[^/.]+$/, ".mp3")} ${Date.now()}`
     );
+    await uploadBytesResumable(
+      mp3FileRef,
+      mp3Blob,
+      { contenteType: "audio/mp3" } // Ajusta según el tipo MIME correcto para MP3
+    );
+    const mp3Url = await getDownloadURL(mp3FileRef);
 
-    const fileMetada = {
+    /*const fileMetada = {
       contenteType: req.file.mimetype,
     };
     const fileUploadPromise = uploadBytesResumable(
@@ -221,11 +252,11 @@ const addAudio = async (req, res) => {
       fileMetada
     );
     await fileUploadPromise;
-    const url = await getDownloadURL(fileRef);
+    const url = await getDownloadURL(fileRef);*/
 
     // Almacenar la URL en MongoDB
     const audio = new Audio({
-      audio_url: url,
+      audio_url: mp3Url, // modificado
       audio_date: date,
       user_id: userId,
       user_name: userData.username,
