@@ -9,13 +9,6 @@ import {
   deleteObject,
 } from "firebase/storage";
 
-// nuevo 
-const ffmpeg = require('fluent-ffmpeg');
-const util = require('util');
-
-const execPromise = util.promisify(ffmpeg.ffprobe);
-//
-
 
 dotenv.config();
 const mongoURI = process.env.API_KEY;
@@ -204,46 +197,18 @@ const addAudio = async (req, res) => {
   const userId = req.params.id;
   const userData = await Person.findById(userId);
   const date = new Date().toLocaleDateString();
-
   try {
     if (!req.file) {
       return res
         .status(400)
         .send({ error: "Debes subir un archivo de audio." });
     }
-
     let fileBuffer = await req.file.buffer;
-    //
-    // Convertir el audio a formato MP3 con FFmpeg
-    const mp3Buffer = await new Promise((resolve, reject) => {
-      ffmpeg()
-        .input(fileBuffer)
-        .audioCodec("libmp3lame")
-        .toFormat("mp3")
-        .on("end", () => resolve())
-        .on("error", (err) => reject(err))
-        .pipe();
-    });
-
-    const mp3Blob = new Blob([mp3Buffer], { type: "audio/mp3" });
-    //
-    /*const fileRef = ref(
+    const fileRef = ref(
       storage,
       `files/${req.file.originalname} ${Date.now()}`
-    );*/
-    
-const mp3FileRef = ref(
-  storage,
-  `files/${req.file.originalname.replace(/\.[^/.]+$/, ".mp3")} ${Date.now()}`
     );
-    await uploadBytesResumable(
-      mp3FileRef,
-      mp3Blob,
-      { contenteType: "audio/mp3" } // Ajusta según el tipo MIME correcto para MP3
-    );
-    const mp3Url = await getDownloadURL(mp3FileRef);
-
-    /*const fileMetada = {
+    const fileMetada = {
       contenteType: req.file.mimetype,
     };
     const fileUploadPromise = uploadBytesResumable(
@@ -252,11 +217,10 @@ const mp3FileRef = ref(
       fileMetada
     );
     await fileUploadPromise;
-    const url = await getDownloadURL(fileRef);*/
-
+    const url = await getDownloadURL(fileRef);
     // Almacenar la URL en MongoDB
     const audio = new Audio({
-      audio_url: mp3Url, // modificado
+      audio_url: url,
       audio_date: date,
       user_id: userId,
       user_name: userData.username,
