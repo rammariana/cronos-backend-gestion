@@ -2,7 +2,6 @@ import dotenv from "dotenv";
 import mongoose from "mongoose";
 import { Schema, model } from "mongoose";
 import { storage } from "./firebaseConfig.js";
-import * as fs from "fs";
 import {
   ref,
   getDownloadURL,
@@ -206,20 +205,7 @@ const addAudio = async (req, res) => {
         .status(400)
         .send({ error: "Debes subir un archivo de audio." });
     }
-    // **NUEVO CÓDIGO**
-    const audioBlob = new Blob(req.file.buffer, { type: "audio/mp3" }); // Crear un Blob a partir del buffer del archivo
-    const audioStream = fs.createReadStream(audioBlob); // Convertir el Blob en un stream
-    const mp3File = fs.createWriteStream("audio.mp3"); // Crear un archivo MP3
 
-    audioStream.pipe(mp3File); // Escribir el stream al archivo MP3
-
-    mp3File.on("finish", () => {
-      console.log("Archivo MP3 creado");
-
-      // Continuar con el proceso de subida
-      const fileBuffer = fs.readFileSync("audio.mp3"); // Leer el archivo MP3 como buffer
-    });
-    // **FIN DEL NUEVO CÓDIGO**
     let fileBuffer = await req.file.buffer;
     const fileRef = ref(
       storage,
