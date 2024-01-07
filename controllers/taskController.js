@@ -234,7 +234,7 @@ const addAudio = async (req, res) => {
     res.status(200).json(data);
   } catch (error) {
     console.error(error.message);
-    res.status(500).send("Error interno al subir el archivo.");
+    res.status(500).send({ error: "Error interno al subir el archivo." });
   }
 };
 const getAudios = async (req, res) => {
