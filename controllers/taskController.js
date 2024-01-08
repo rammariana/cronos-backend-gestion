@@ -198,18 +198,18 @@ const addAudio = async (req, res) => {
   const userData = await Person.findById(userId);
   const date = new Date().toLocaleDateString();
   try {
-    if (!req.file) {
+    if (!req.body.audio) {
       return res
         .status(400)
         .send({ error: "Debes subir un archivo de audio." });
     }
-    let fileBuffer = await req.file.buffer;
+    let fileBuffer = await req.body.audio.buffer;
     const fileRef = ref(
       storage,
-      `files/${req.file.originalname} ${Date.now()}`
+      `files/${req.body.audio.originalname} ${Date.now()}`
     );
     const fileMetada = {
-      contenteType: req.file.mimetype,
+      contenteType: req.body.audio.mimetype,
     };
     const fileUploadPromise = uploadBytesResumable(
       fileRef,
