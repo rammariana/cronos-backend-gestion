@@ -33,7 +33,7 @@ const taskSchema = new Schema({
   task_days: { type: [String] }, // Esto va a depender de donde se haga click
   task_hour: { type: String }, // Esto va a depender de donde se haga click
   task_priority: { type: String, required: true },
-  task_completed: { type: Boolean, default: false },
+  task_completed: { type: String, default: "false" },
   user_id: { type: mongoose.Schema.Types.ObjectId, ref: "User" }, // FK(foreign key)
   username: { type: String, ref: "User" },
 });
@@ -209,7 +209,7 @@ const addAudio = async (req, res) => {
       `files/${req.body.audio.originalname} ${Date.now()}`
     );
     const fileMetada = {
-      contenteType: req.body.audio.mimetype,
+      contenteType: req.body.audio.file.mimetype,
     };
     const fileUploadPromise = uploadBytesResumable(
       fileRef,
