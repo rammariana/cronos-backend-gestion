@@ -196,29 +196,18 @@ const deleteTask = async (req, res) => {
 const addAudio = async (req, res) => {
   const userId = req.params.id;
   const userData = await Person.findById(userId);
+  const { url } = req.body;
   const date = new Date().toLocaleDateString();
   try {
-    if (!req.body.audio) {
+    if (!url) {
       return res
         .status(400)
-        .send({ error: "Debes subir un archivo de audio." });
+        .json({ error: "La URL es requerida en el cuerpo de la solicitud." });
     }
-    let fileBuffer = await req.body.audio.buffer;
-    const fileRef = ref(
-      storage,
-      `files/${req.body.audio.originalname} ${Date.now()}`
-    );
-    const fileMetada = {
-      contenteType: req.body.audio.file.mimetype,
-    };
-    const fileUploadPromise = uploadBytesResumable(
-      fileRef,
-      fileBuffer,
-      fileMetada
-    );
-    await fileUploadPromise;
-    const url = await getDownloadURL(fileRef);
-    // Almacenar la URL en MongoDB
+
+    if (!userData) {
+      return res.status(404).json({ error: "Usuario no encontrado." });
+    }
     const audio = new Audio({
       audio_url: url,
       audio_date: date,
@@ -228,7 +217,7 @@ const addAudio = async (req, res) => {
     const data = await audio.save();
     res.status(200).json(data);
   } catch (error) {
-    console.error(error.message);
+    console.error(error);
     res.status(500).json({ error: "Error interno al subir el archivo." });
   }
 };
