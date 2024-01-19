@@ -196,7 +196,7 @@ const deleteAllTasks = async (req, res) => {
   const userId = req.params.id;
 
   try {
-    tasksToDelete = await Task.deleteMany({ _id: userId });
+    tasksToDelete = await Task.deleteMany({ user_id: userId });
 
     if (!tasksToDelete) {
       return res.status(400).json({ error: "Not found" });
