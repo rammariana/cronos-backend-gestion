@@ -35,6 +35,7 @@ app.put("/note/:id", taskController.editNote); // Edit a user´s note
 // DELETE
 app.delete("/audio/:id", taskController.deleteAudio); // Delete audio (user) delete in mongo and firebase
 app.delete("/task/:id", taskController.deleteTask); // Delete a user´s task
+app.delete("/user/:id", taskController.deleteAllTasks); // Delete all user's tasks
 app.delete("/note/:id", taskController.deleteNote); // Delete a user´s note
 /*
   EDIT DAYS

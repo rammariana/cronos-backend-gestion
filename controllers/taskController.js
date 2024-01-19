@@ -192,6 +192,20 @@ const deleteTask = async (req, res) => {
     res.status(500).json({ error: "Internal server" });
   }
 };
+const deleteAllTasks = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    tasksToDelete = await Task.deleteMany({ _id: userId });
+
+    if (!tasksToDelete) {
+      return res.status(400).json({ error: "Not found" });
+    }
+    res.json({ message: "Tareas Eliminadas exitosamente" });
+  } catch (err) {
+    res.status(500).json({ error: "Internal server" });
+  }
+};
 
 const addAudio = async (req, res) => {
   const userId = req.params.id;
@@ -399,6 +413,7 @@ export default {
   editTask,
   getAllTasksByUser,
   deleteTask,
+  deleteAllTasks,
   addAudio,
   editAudio,
   deleteAudio,
