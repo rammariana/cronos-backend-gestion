@@ -25,7 +25,7 @@ const userSchema = new Schema({
   username: { type: String, required: true },
   email: { type: String, required: true },
   password: { type: String, required: true },
-  date: { type: Date, default: new Date().toLocaleDateString() },
+  date: { type: Date, default: Date.now },
 });
 
 const taskSchema = new Schema({
@@ -197,10 +197,6 @@ const deleteAllTasks = async (req, res) => {
 
   try {
     tasksToDelete = await Task.deleteMany({ user_id: userId });
-
-    if (!tasksToDelete) {
-      return res.status(400).json({ error: "Not found" });
-    }
     res.json({ message: "Tareas Eliminadas exitosamente" });
   } catch (err) {
     res.status(500).json({ error: "Internal server" });
